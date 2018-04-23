@@ -56,7 +56,7 @@ public class MeteoDAO {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 
-			st.setInt(1, mese); //da controllare
+			st.setInt(1, mese); 
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -79,24 +79,24 @@ public class MeteoDAO {
 		return avg;
 	}
 
-	public List<SimpleCity> get15Giorni(int mese) {
-		final String sql = "SELECT Umidita, Data, Localita FROM situazione WHERE month(data)=? ORDER BY Data" ;
+	public List<Rilevamento> get15Giorni(int mese) {
+		final String sql = "SELECT Umidita, Data, Localita FROM situazione WHERE month(data)=? AND day(data)<=15 ORDER BY Data" ;
 		
-		List<SimpleCity> s = new ArrayList<SimpleCity>() ;
-		
+		List<Rilevamento> s = new ArrayList<Rilevamento>() ;
 		
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 
-			st.setInt(1, mese); //da controllare
+			st.setInt(1, mese); 
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				
-				SimpleCity r = new SimpleCity(rs.getString("Localita"));
-				r.setCosto(rs.getInt("umidita"));
+				Rilevamento r = new Rilevamento(rs.getString("Localita"),rs.getDate("data"),rs.getInt("umidita"));
+				System.out.println(r);
 				s.add(r);
+				
 				
 			}
 			return s ;
