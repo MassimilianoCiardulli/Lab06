@@ -1,8 +1,10 @@
 package it.polito.tdp.meteo;
 
 import java.net.URL;
+import java.time.Month;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.meteo.bean.Citta;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,6 +13,8 @@ import javafx.scene.control.TextArea;
 
 public class MeteoController {
 
+	Model model;
+	
 	@FXML
 	private ResourceBundle resources;
 
@@ -18,7 +22,7 @@ public class MeteoController {
 	private URL location;
 
 	@FXML
-	private ChoiceBox<?> boxMese;
+	private ChoiceBox<Month> boxMese;
 
 	@FXML
 	private Button btnCalcola;
@@ -31,12 +35,24 @@ public class MeteoController {
 
 	@FXML
 	void doCalcolaSequenza(ActionEvent event) {
+		Month m = boxMese.getValue();
 
+		if(m!=null) {
+			model.calcolaSequenza(m);
+		}
 	}
 
 	@FXML
 	void doCalcolaUmidita(ActionEvent event) {
+		Month m = boxMese.getValue();
+		if(m!=null) {
+			txtResult.appendText(String.format("Mese: %s\n", m.toString()));
 
+			for(Citta c:model.getLeCitta()) {
+				double u = model.getUmiditaMedia(m, c);
+				txtResult.appendText(String.format("Città: %s, Umidità media: %f\n", c.getNome(), u));
+			}
+		}
 	}
 
 	@FXML
@@ -45,6 +61,13 @@ public class MeteoController {
 		assert btnCalcola != null : "fx:id=\"btnCalcola\" was not injected: check your FXML file 'Meteo.fxml'.";
 		assert btnUmidita != null : "fx:id=\"btnUmidita\" was not injected: check your FXML file 'Meteo.fxml'.";
 		assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Meteo.fxml'.";
+		
+		for(int i = 1; i <= 12; i++)
+			boxMese.getItems().add(Month.of(i));
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 }
